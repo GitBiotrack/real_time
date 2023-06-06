@@ -1,0 +1,797 @@
+version: 2
+
+sources:
+  - name: postgres_cann_replication_public
+    description: Trace tables in snowflake
+    tables:
+      - name: bmsi_customers_raw
+      - name: bmsi_dispensing_raw
+      - name: bmsi_locations_raw
+      - name: bmsi_inventory_raw
+      - name: log_bmsi_inventory_raw
+      - name: bmsi_inventoryrooms_raw
+      - name: bmsi_inventorytypes_raw
+      - name: customers_raw
+      - name: conditions_raw
+      - name: discounts_raw
+      - name: inventorylog_raw
+      - name: inventory_raw
+      - name: inventoryrooms_raw
+      - name: inventorytypes_raw
+      - name: locations_raw
+      - name: location_type_desc
+      - name: org
+      - name: payments_raw
+      - name: perfs_raw
+      - name: productcategories_raw
+      - name: productslog_raw
+      - name: products_raw
+      - name: rooms_raw
+      - name: sales_raw
+      - name: taxcategories_raw
+      - name: tickets_raw
+      - name: vendors_raw
+
+models:
+  - name: stg_customers_retail
+    config:
+      tags: ['pii']
+    columns:
+      - name: customerid
+        tests:
+          - not_null
+      - name: org
+        tests:
+          - not_null
+      - name: location
+        tests:
+          - not_null
+    # multiple columns make this table unique
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+            - customerid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: created
+          interval: 1
+
+  - name: stg_inventory_retail
+    columns:
+      - name: id
+        tests:
+          - not_null
+      - name: location
+        tests:
+          - not_null
+    # multiple columns make this table unique
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+            - id
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  - name: stg_inventorylogs_retail
+    columns:
+      - name: logid
+        tests:
+          - not_null
+      - name: inventoryid
+        tests:
+          - not_null
+    # multiple columns make this table unique
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+            - inventoryid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  - name: stg_inventory_rooms_retail
+    columns:
+      - name: id
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - id
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: stg_inventorytypes_retail
+    columns:
+      - name: id
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - id
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: stg_locations_retail
+    columns:
+      - name: location
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: stg_payments_retail
+    columns:
+      - name: ticketid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+            - ticketid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: stg_product_categories_retail
+    columns:
+      - name: product_categories_id
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+            - product_categories_id
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: stg_products_retail
+    columns:
+      - name: productid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - productid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: created
+          interval: 1
+
+  - name: stg_productslogs_retail
+    columns:
+      - name: logid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - logid
+            - org
+            - location
+            - productid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  - name: stg_sales_retail
+    columns:
+      - name: saleid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+            - saleid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: datetime_timestamp
+          interval: 1
+
+  - name: stg_taxcategories_retail
+    columns:
+      - name: id
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - id
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: stg_tickets_retail
+    columns:
+      - name: ticketid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+            - ticketid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: datetime_timestamp
+          interval: 1
+
+  - name: stg_vendors_retail
+    columns:
+      - name: vendorid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - vendorid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: stg_customers_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+    columns:
+      - name: customerid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - location
+            - customerid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: created
+          interval: 1
+
+  - name: stg_inventory_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+    columns:
+      - name: id
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - location
+            - id
+            - productid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  - name: stg_inventorylog_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+    columns:
+      - name: id
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - location
+            - id
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  - name: stg_inventorytypes_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique
+    tests:
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: stg_locations_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+    columns:
+      - name: location
+        tests:
+          - not_null
+          - unique
+    tests:
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: stg_refunds_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+    columns:
+      - name: transactionid_original
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - location
+            - transactionid_original
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # not checking for sessiontime recency as this table uses stg_trace__sales below
+
+  - name: stg_sales_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+    columns:
+      - name: saleid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - location
+            - saleid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  # no tests for this, its just a select * of stg_retail__customers
+  - name: int_customers_retail
+
+  - name: int_dispensary_retail
+    columns:
+      - name: org
+        tests:
+          - not_null
+      - name: location
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: int_inventory_retail
+    columns:
+      - name: inventoryid
+        tests:
+          - not_null
+      - name: productid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - inventoryid
+            - productid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  - name: int_product_inventory_retail
+    columns:
+      - name: inventoryid
+        tests:
+          - not_null
+      - name: productid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - inventoryid
+            - productid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  - name: int_products_retail
+    columns:
+      - name: productid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+            - productid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: created
+          interval: 1
+
+  - name: int_sales_retail
+    columns:
+      - name: saleid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - org
+            - location
+            - saleid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: datetime_timestamp
+          interval: 1
+
+  # no tests, this table is a selct * of stg_trace__customers
+  - name: int_customers_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+
+  - name: int_dispensary_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+    columns:
+      - name: location
+        tests:
+          - not_null
+          - unique
+    tests:
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: int_products_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+    columns:
+      - name: productid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - location
+            - productid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  - name: int_sales_trace
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+    columns:
+      - name: saleid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - location
+            - saleid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  - name: retail_customer_dispensary_facts
+    config:
+      # rename for looker
+      alias: customer_dispensary_facts
+      # this table must be a view to work with the legacy dashboard
+      materialized: view
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+
+  - name: retail_dispensary_all_view
+    config:
+      # rename table for looker
+      alias: dispensary_all_view
+    columns:
+      - name: dispensary_id
+        tests:
+          - not_null
+          - unique
+    tests:
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+
+  - name: retail_product_inventory
+    config:
+      # rename table for looker
+      alias: product_inventory
+    columns:
+      - name: guid_product_inventory
+        tests:
+          - not_null
+          - unique
+    tests:
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
+
+  - name: retail_transaction_detail
+    config:
+      # rename table for looker
+      alias: pos_transaction_detail
+    columns:
+      - name: saleid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - source_dispensary_org_id
+            - source_dispensary_location_id
+            - saleid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      # make sure most recent date value is < 1 day old
+      - dbt_utils.recency:
+          datepart: day
+          field: datetime_timestamp
+          interval: 1
+
+  - name: trace_customer_dispensary_facts
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+      # rename for looker
+      alias: customer_dispensary_facts
+      # this table must be a view to work with the legacy dashboard
+      materialized: view
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+
+  - name: trace_transaction_detail
+    config:
+      # populate the table in <original_schema>_trace
+      schema: trace
+      # rename for looker
+      alias: pos_transaction_detail
+    columns:
+      - name: saleid
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - source_dispensary_location_id
+            - saleid
+      - table_is_empty
+      # check that dbt ran recently
+      - dbt_utils.recency:
+          datepart: day
+          field: extract_date
+          interval: 1
+      - dbt_utils.recency:
+          datepart: day
+          field: sessiontime_timestamp
+          interval: 1
