@@ -6672,3 +6672,16 @@ select * from select_and_filter
 2023-06-08 14:56:38.497594 (Thread-3): handling poll request
 2023-06-08 14:56:38.498108 (Thread-3): 14:56:38  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aafee396-a55e-4046-974d-2e44b65646ce', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f4b1ca98190>]}
 2023-06-08 14:56:38.499433 (Thread-3): sending response (<Response 352 bytes [200 OK]>) to 10.0.190.180
+2023-06-08 14:56:54.758525 (Thread-4): handling reload request
+2023-06-08 14:56:54.759023 (Thread-4): 14:56:54  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aafee396-a55e-4046-974d-2e44b65646ce', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f4b1caa4d60>]}
+2023-06-08 14:56:54.759503 (Thread-4): sending response (<Response 61 bytes [200 OK]>) to 10.0.190.180
+2023-06-08 14:56:54.790402 (Thread-5): 14:56:54  checksum: 0049c9ca814b191acba678e7b1a0d7a85eeac3e13700309cfc1ce1a2c78d3886, vars: {}, profile: user, target: None, version: 1.4.6
+2023-06-08 14:56:54.946294 (Thread-5): 14:56:54  Partial parsing enabled: 0 files deleted, 0 files added, 0 files changed.
+2023-06-08 14:56:54.946644 (Thread-5): 14:56:54  Partial parsing enabled, no changes found, skipping parsing
+2023-06-08 14:56:54.957329 (Thread-5): 14:56:54  Sending event: {'category': 'dbt', 'action': 'load_project', 'label': 'aafee396-a55e-4046-974d-2e44b65646ce', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f4b1c75dfa0>]}
+2023-06-08 14:56:54.988849 (Thread-6): handling status request
+2023-06-08 14:56:54.989336 (Thread-6): 14:56:54  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aafee396-a55e-4046-974d-2e44b65646ce', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f4b1c88a790>]}
+2023-06-08 14:56:54.989878 (Thread-6): sending response (<Response 1585 bytes [200 OK]>) to 10.0.190.180
+2023-06-08 14:57:05.187116 (Thread-7): handling status request
+2023-06-08 14:57:05.187649 (Thread-7): 14:57:05  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': 'aafee396-a55e-4046-974d-2e44b65646ce', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f4b1c88a670>]}
+2023-06-08 14:57:05.188179 (Thread-7): sending response (<Response 1585 bytes [200 OK]>) to 10.0.190.180
