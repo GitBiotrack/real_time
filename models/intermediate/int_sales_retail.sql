@@ -2,7 +2,7 @@ with
 -- select from stage payments
 payments as (
     select *
-    from {{ ref('stg_payments_retail') }}
+    from prod_analytics_db.prod.stg_payments_retail
 ),
 
 -- select from stage sales
@@ -14,7 +14,7 @@ sales as (
 -- select from stage tickets
 tickets as (
     select *
-    from {{ ref('stg_tickets_retail') }}
+    from prod_analytics_db.prod.stg_tickets_retail
 ),
 
 

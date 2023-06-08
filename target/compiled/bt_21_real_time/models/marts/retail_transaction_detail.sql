@@ -2,25 +2,25 @@ with
 -- select mart transaction item
 sales as (
     select *
-    from PC_FIVETRAN_DB.dbt_real_time.int_sales_retail
+    from prod_analytics_db.prod.int_sales_retail
 ),
 
 -- select int products
 products as (
     select *
-    from PC_FIVETRAN_DB.dbt_real_time.int_products_retail
+    from prod_analytics_db.prod.int_products_retail
 ),
 
 -- select mart dispensary
 dispensary as (
     select *
-    from PC_FIVETRAN_DB.dbt_real_time.int_dispensary_retail
+    from prod_analytics_db.prod.int_dispensary_retail
 ),
 
 -- select int customers
 customers as (
     select *
-    from PC_FIVETRAN_DB.dbt_real_time.int_customers_retail
+    from prod_analytics_db.prod.int_customers_retail
 ),
 
 -- group by product to get max product cost
