@@ -8,7 +8,7 @@ payments as (
 -- select from stage sales
 sales as (
     select *
-    from {{ ref('stg_sales_retail') }}
+    from PC_FIVETRAN_DB.dbt_real_time.stg_sales_retail
 ),
 
 -- select from stage tickets

@@ -1,4 +1,9 @@
-with
+
+  
+    
+
+        create or replace transient table PC_FIVETRAN_DB.dbt_real_time.int_sales_retail  as
+        (with
 -- select from stage payments
 payments as (
     select *
@@ -8,7 +13,7 @@ payments as (
 -- select from stage sales
 sales as (
     select *
-    from {{ ref('stg_sales_retail') }}
+    from PC_FIVETRAN_DB.dbt_real_time.stg_sales_retail
 ),
 
 -- select from stage tickets
@@ -106,3 +111,6 @@ the_behemoth as (
 
 -- final select
 select * from the_behemoth
+        );
+      
+  

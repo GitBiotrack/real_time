@@ -1,5 +1,9 @@
 
-with
+  
+    
+
+        create or replace transient table PC_FIVETRAN_DB.dbt_real_time.pos_transaction_detail  as
+        (with
 -- select mart transaction item
 sales as (
     select *
@@ -230,3 +234,6 @@ from transaction_joins
 where is_refunded = 0
     and is_deleted = 0
     and lower(left(dispensary_license_type, 5)) = 'dispe'
+        );
+      
+  

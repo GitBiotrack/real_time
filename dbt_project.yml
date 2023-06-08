@@ -2,7 +2,7 @@
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'bt_21_fivetran_trans'
+name: 'bt_21_real_time'
 version: '1.0.0'
 config-version: 2
 
@@ -32,11 +32,11 @@ clean-targets:         # directories to be removed by `dbt clean`
 # as tables. These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 models:
-  bt_21_fivetran_trans:
-    database: |
-      {% if target.name == 'dev' %} dev
-      {% elif target.name == 'prod' %} prod_analytics_db
-      {% endif %}
+  bt_21_real_time:
+    #database: |
+    #  {% if target.name == 'dev' %} dev
+    #  {% elif target.name == 'prod' %} prod_analytics_db
+    #  {% endif %}
     staging:
       +materialized: table
     intermediate:

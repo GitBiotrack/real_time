@@ -1,4 +1,3 @@
-
 with
 -- select mart transaction item
 sales as (
