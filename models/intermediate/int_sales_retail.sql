@@ -103,7 +103,7 @@ the_behemoth as (
     left join payments on payments.ticketid = sales_updated.ticketid
         and payments.org = sales_updated.org
         and payments.location = sales_updated.location
-    --where sales_updated.last_sync > int_sales_retail_inc.last_sync
+    where sales_updated.last_sync > int_sales_retail_inc.last_sync
 )
 
 -- final select
