@@ -38,9 +38,9 @@ models:
     #  {% elif target.name == 'prod' %} prod_analytics_db
     #  {% endif %}
     staging:
-      +materialized: table
+      +materialized: table #incremental
     intermediate:
-      +materialized: table
+      +materialized: table #incremental
     marts:
-      +materialized: table
+      +materialized: table #incremental
     

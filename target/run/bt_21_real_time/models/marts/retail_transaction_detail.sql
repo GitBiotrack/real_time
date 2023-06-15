@@ -7,7 +7,7 @@
 -- select mart transaction item
 sales as (
     select *
-    from prod_analytics_db.prod.int_sales_retail
+    from PC_FIVETRAN_DB.dbt_real_time.int_sales_retail
 ),
 
 -- select int products
@@ -213,7 +213,8 @@ transaction_joins as (
         null as consumer_lifestage_insurance_group_description,
         null as consumer_electronics,
         -- DEI-256 removing data from this column, but keeping it in the table
-        null as location_type_desc_id
+        null as location_type_desc_id,
+        sales.last_sync
 
     from sales
     left join products_aggregate
@@ -225,6 +226,7 @@ transaction_joins as (
     left join customers on customers.customerid = sales.customerid
         and customers.org  = sales.org
         and customers.location = sales.location
+    --where sales.last_sync > (select max(last_sync) from pos_transaction_detail)
 
 )
 
