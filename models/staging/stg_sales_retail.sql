@@ -40,6 +40,6 @@ selected as  (
         s._fivetran_synced as last_sync
     from postgres_cann_replication_public.sales_raw s join postgres_cann_replication_public.org o on s.org = o.orgid 
     where s._fivetran_deleted = false and to_timestamp(datetime) > GETDATE() - interval '1095 days' 
-    and s._fivetran_synced > (select max(last_sync) from stg_sales_retail_inc)
+    and s._fivetran_synced > (select max(last_sync) from stg_sales_retail)
 )
 select * from selected
