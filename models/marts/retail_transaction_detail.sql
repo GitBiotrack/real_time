@@ -222,7 +222,7 @@ transaction_joins as (
     left join customers on customers.customerid = sales.customerid
         and customers.org  = sales.org
         and customers.location = sales.location
-    --where sales.last_sync > (select max(last_sync) from pos_transaction_detail)
+    where sales.last_sync > (select max(last_sync) from pos_transaction_detail)
 
 )
 
