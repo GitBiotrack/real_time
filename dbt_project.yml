@@ -33,10 +33,10 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   bt_21_real_time:
-    database: |
-      {% if target.name == 'dev' %} dev
-      {% elif target.name == 'prod' %} prod_analytics_db
-      {% endif %}
+    database: prod_analytics_db
+    #  {% if target.name == 'dev' %} dev
+    #  {% elif target.name == 'prod' %} prod_analytics_db
+    #  {% endif %}
     staging:
       +materialized: incremental
     intermediate:

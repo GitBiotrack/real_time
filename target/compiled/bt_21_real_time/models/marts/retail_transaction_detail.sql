@@ -2,7 +2,7 @@ with
 -- select mart transaction item
 sales as (
     select *
-    from PC_FIVETRAN_DB.dbt_real_time.int_sales_retail
+    from prod_analytics_db.dbt_real_time.int_sales_retail
 ),
 
 -- select int products
@@ -212,6 +212,8 @@ transaction_joins as (
         sales.last_sync
 
     from sales
+    left join prod_analytics_db.prod.pos_transaction_detail r
+    on sales.org = r.SOURCE_DISPENSARY_ORG_ID and sales.saleid = r.saleid
     left join products_aggregate
         on sales.productid = products_aggregate.productid
         -- org should suffice, no location needed
@@ -221,7 +223,7 @@ transaction_joins as (
     left join customers on customers.customerid = sales.customerid
         and customers.org  = sales.org
         and customers.location = sales.location
-    --where sales.last_sync > (select max(last_sync) from pos_transaction_detail)
+    where r.SOURCE_DISPENSARY_ORG_ID is null and to_timestamp(sales.datetime) > GETDATE() - interval '2 days'
 
 )
 
