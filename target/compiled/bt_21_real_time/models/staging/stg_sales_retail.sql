@@ -1,6 +1,7 @@
 with 
 -- select customers from the nm trace schema
 selected as  (
+    select * from (
     select
         s.org,
         location,
@@ -37,9 +38,10 @@ selected as  (
         tax_collected_excise,
         -- DEI-236
         current_timestamp() as extract_date,
-        s._fivetran_synced as last_sync
-    from postgres_cann_replication_public.sales_raw s join postgres_cann_replication_public.org o on s.org = o.orgid 
-    where s._fivetran_deleted = false and to_timestamp(datetime) > GETDATE() - interval '1095 days' 
-    --and s._fivetran_synced > (select max(last_sync) from stg_sales_retail_inc)
+        s._fivetran_synced as last_sync, A.ls
+    from postgres_cann_replication_public.sales_raw s join postgres_cann_replication_public.org o on s.org = o.orgid
+    left join (select max(last_sync) as ls, org from stg_sales_retail group by 2) A on A.org = s.org
+    where s._fivetran_deleted = false and to_timestamp(datetime) > GETDATE() - interval '2 days') Q
+    where Q.last_sync < Q.ls
 )
 select * from selected

@@ -45,13 +45,17 @@ sales_updated as (
             -- or leave it as is
             else sales.refunded
         -- name it as a new column
-        end as refunded_updated
-    from sales
+        end as refunded_updated--, A.ls
+    from sales --left join (select max(last_sync) as ls, org from sales group by 2) A on A.org = s.org 
+    left join prod_analytics_db.prod.int_sales_retail r
+    on sales.org = r.org and sales.saleid = r.saleid
     left join refunds
         -- join reference id on original id
         on refunds.transactionid_original = sales.transactionid
         and refunds.org = sales.org
         and refunds.location = sales.location
+    where r.org is null and to_timestamp(sales.datetime) > GETDATE() - interval '2 days'
+    --where sales.last_sync < sales.ls
 ),
 
 -- join above tables. This was originally the largest query, the final boss, the behemoth
@@ -103,7 +107,7 @@ the_behemoth as (
     left join payments on payments.ticketid = sales_updated.ticketid
         and payments.org = sales_updated.org
         and payments.location = sales_updated.location
-    where sales_updated.last_sync > (select max(last_sync) from int_sales_retail)
+    --where sales_updated.last_sync > (select max(last_sync) from int_sales_retail)
 )
 
 -- final select
