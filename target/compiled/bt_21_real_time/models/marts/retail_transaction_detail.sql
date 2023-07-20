@@ -2,7 +2,7 @@ with
 -- select mart transaction item
 sales as (
     select *
-    from prod_analytics_db.dbt_real_time.int_sales_retail
+    from prod_analytics_db.dbt_livesales.int_sales_retail
 ),
 
 -- select int products

@@ -2,7 +2,8 @@
   
     
 
-        create or replace transient table prod_analytics_db.dbt_real_time.stg_sales_retail  as
+        create or replace transient table prod_analytics_db.dbt_livesales.stg_sales_retail
+         as
         (with 
 -- select customers from the nm trace schema
 selected as  (

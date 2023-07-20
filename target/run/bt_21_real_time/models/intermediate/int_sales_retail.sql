@@ -2,7 +2,8 @@
   
     
 
-        create or replace transient table prod_analytics_db.dbt_real_time.int_sales_retail  as
+        create or replace transient table prod_analytics_db.dbt_livesales.int_sales_retail
+         as
         (with
 -- select from stage payments
 payments as (
@@ -13,7 +14,7 @@ payments as (
 -- select from stage sales
 sales as (
     select *
-    from prod_analytics_db.dbt_real_time.stg_sales_retail
+    from prod_analytics_db.dbt_livesales.stg_sales_retail
 ),
 
 -- select from stage tickets
